@@ -3,76 +3,91 @@ package com.abc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.abs;
-
 public class Customer {
-    private String name;
-    private List<Account> accounts;
+    private String firstName;
+	private String lastName;
+	private String socialSecurityNumber;
+    
+	private List<Account> accounts;
 
-    public Customer(String name) {
-        this.name = name;
-        this.accounts = new ArrayList<Account>();
+    public Customer( String firstName, String lastName, String socialSecurityNumber ) {
+    	this.firstName = firstName;
+    	this.lastName = lastName;
+    	this.socialSecurityNumber = socialSecurityNumber;
+    	this.accounts = new ArrayList<Account>();
     }
-
+    
+    public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	
     public String getName() {
-        return name;
+        return firstName + " " + lastName;
     }
+    public String getSocialSecurityNumber() {
+		return socialSecurityNumber;
+	}
+	public void setSocialSecurityNumber(String socialSecurityNumber) {
+		this.socialSecurityNumber = socialSecurityNumber;
+	}
 
-    public Customer openAccount(Account account) {
+	public List<Account> getAccounts() {
+		return this.accounts;
+	}
+	
+    public void addAccount(Account account) {
         accounts.add(account);
-        return this;
     }
-
-    public int getNumberOfAccounts() {
-        return accounts.size();
+    
+    public boolean contains( Account account ) {
+    	for( Account a : this.accounts ) {
+    		if( account == a ) return true;
+    	}
+    	
+    	return false;
     }
-
+    
     public double totalInterestEarned() {
         double total = 0;
         for (Account a : accounts)
             total += a.interestEarned();
+        
         return total;
     }
 
-    public String getStatement() {
-        String statement = null;
-        statement = "Statement for " + name + "\n";
-        double total = 0.0;
-        for (Account a : accounts) {
-            statement += "\n" + statementForAccount(a) + "\n";
-            total += a.sumTransactions();
-        }
-        statement += "\nTotal In All Accounts " + toDollars(total);
-        return statement;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((accounts == null) ? 0 : accounts.hashCode());
+		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + ((socialSecurityNumber == null) ? 0 : socialSecurityNumber.hashCode());
+		return result;
+	}
 
-    private String statementForAccount(Account a) {
-        String s = "";
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Customer other = (Customer) obj;
 
-       //Translate to pretty account type
-        switch(a.getAccountType()){
-            case Account.CHECKING:
-                s += "Checking Account\n";
-                break;
-            case Account.SAVINGS:
-                s += "Savings Account\n";
-                break;
-            case Account.MAXI_SAVINGS:
-                s += "Maxi Savings Account\n";
-                break;
-        }
-
-        //Now total up all the transactions
-        double total = 0.0;
-        for (Transaction t : a.transactions) {
-            s += "  " + (t.amount < 0 ? "withdrawal" : "deposit") + " " + toDollars(t.amount) + "\n";
-            total += t.amount;
-        }
-        s += "Total " + toDollars(total);
-        return s;
-    }
-
-    private String toDollars(double d){
-        return String.format("$%,.2f", abs(d));
-    }
+		if (socialSecurityNumber == null) {
+			if (other.socialSecurityNumber != null)
+				return false;
+		} else if (!socialSecurityNumber.equals(other.socialSecurityNumber))
+			return false;
+		return true;
+	}
 }
